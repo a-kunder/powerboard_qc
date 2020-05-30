@@ -13,14 +13,25 @@ import numpy as np
 import tensorflow as tf
 
 parser = argparse.ArgumentParser(description='Generate images for training/testing')
-parser.add_argument('outDir', help='Output directory')
-parser.add_argument('--font', default='fonts/DroidSansMono.ttf', help='Font for test rendering')
+parser.add_argument('outDir'      , help='Output directory')
+parser.add_argument('--font'      , default='fonts/DroidSansMono.ttf', help='Font for test rendering')
+parser.add_argument('--ngen', '-n', default=1000, type=int           , help='Number of images to generate')
 
 
 args = parser.parse_args()
 
+# Create necessary output directories
 if not os.path.exists(args.outDir):
     os.mkdir(args.outDir)
+
+if not os.path.exists(args.outDir+"/00-plain"):
+    os.mkdir(args.outDir+"/00-plain")
+
+if not os.path.exists(args.outDir+"/01-blur"):
+    os.mkdir(args.outDir+"/01-blur")
+
+if not os.path.exists(args.outDir+"/02-augment"):
+    os.mkdir(args.outDir+"/02-augment")
 
 HEIGHT = 374
 WIDTH = 650
@@ -62,8 +73,8 @@ def generate_image(label,outDir='.'):
 
     #saving PIL image and reading as cv2 image to apply blur
     #outDir for me was train_var
-    im.save('{}/{}.png'.format(outDir,label),'PNG')
-    imcv = cv2.imread(f'/Users/ameyakunder/pbv3_imagerec/pbv3_compvision/train_var/{label}.png')
+    im.save(f'{outDir}/00-plain/{label}.png','PNG')
+    imcv = cv2.imread(f'{outDir}/00-plain/{label}.png')
     i = random.randrange(4)
     #randomly blurs image
     if i == 0:
@@ -71,38 +82,38 @@ def generate_image(label,outDir='.'):
     if i == 1:
         imcv = cv2.GaussianBlur(imcv,(5,5),0)
 
-    write_add = f"/Users/ameyakunder/pbv3_imagerec/pbv3_compvision/train/trainimages/{label}.png"
+    write_add = f"{outDir}/01-blur/{label}.png"
     cv2.imwrite(write_add, imcv)
 
-for i in range(1000):
+for i in range(args.ngen):
     generate_image('{:07d}'.format(random.randrange(9999999)),args.outDir)
 
-#image augmentation
+# image augmentation
 train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
-rescale=1./255,
-rotation_range=3,
-width_shift_range=.1,
-height_shift_range=.1,
-horizontal_flip=False,
-zoom_range=0.1)
+    rescale=1./255,
+    rotation_range=3,
+    width_shift_range=.1,
+    height_shift_range=.1,
+    horizontal_flip=False,
+    zoom_range=0.1)
 
 #creating and saving the augmented images
 i = 0
-read_path = "/Users/ameyakunder/pbv3_imagerec/pbv3_compvision/train/trainimages/*.png"
+read_path = f"{args.outDir}/01-blur/*.png"
 for x in glob.glob(read_path):
     #getting the serial number
-    y = x.split("/", 7)[7]
+    y = os.path.basename(x)[:7]
     print(f"serial number : {y}")
-    pic = tf.keras.preprocessing.image.load_img(f"/Users/ameyakunder/pbv3_imagerec/pbv3_compvision/train/trainimages/{y}")
+    pic = tf.keras.preprocessing.image.load_img(x)
     pic_array = tf.keras.preprocessing.image.img_to_array(pic)
     pic_array = pic_array.reshape((1,) + pic_array.shape) # Converting into 4 dimension array
     count = 0
     for batch in train_datagen.flow(
-        pic_array, 
-        batch_size=5,
-        save_to_dir="/Users/ameyakunder/pbv3_imagerec/pbv3_compvision/aug_train", 
-        save_prefix=y, 
-        save_format='png'):
+            pic_array, 
+            batch_size=5,
+            save_to_dir=f"{args.outDir}/02-augment",
+            save_prefix=y, 
+            save_format='png'):
         count += 1
         if count > 3:
             break
