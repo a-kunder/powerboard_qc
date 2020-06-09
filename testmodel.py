@@ -49,7 +49,9 @@ def show_batch(image_batch, label_batch):
         plt.axis('off')
     plt.show()
 
-batch_train_ds = labelled_train_ds.shuffle(1000).batch(32).prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
+training_size = 1000
+
+batch_train_ds = labelled_train_ds.shuffle(1000).take(training_size).batch(32).prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
 batch_test_ds  = labelled_test_ds .shuffle(1000).batch(32).prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
 
 image_batch, label_batch = next(iter(batch_train_ds))
@@ -62,8 +64,8 @@ model.add(tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(100,
 model.add(tf.keras.layers.MaxPooling2D((2, 2)))
 model.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu'))
 model.add(tf.keras.layers.MaxPooling2D((2, 2)))
-model.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu'))
-model.add(tf.keras.layers.MaxPooling2D((2, 2)))
+#model.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu'))
+#model.add(tf.keras.layers.MaxPooling2D((2, 2)))
 
 model.add(tf.keras.layers.Flatten())
 model.add(tf.keras.layers.Dense(64, activation='relu'))
@@ -75,13 +77,18 @@ model.compile(optimizer='adam',
                   loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                   metrics=['accuracy'])
 
+'''log_dir = f"logs/fit_12/{training_size}"
+tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir,
+histogram_freq=1)
+
+print (f"Training size = {training_size}")
+print('\n\n')'''
+
 # Train and test
-model.fit     (batch_train_ds, epochs=5)
+model.fit     (batch_train_ds, epochs=3)#, callbacks=[tensorboard_callback])
 model.evaluate(batch_test_ds , verbose=2)
 
 image_batch, label_batch = next(iter(batch_test_ds))
 predict_batch=np.argmax(model.predict(image_batch),axis=1)
-print(model.predict(image_batch))
-print(f"Predict batch : {predict_batch}")
 show_batch(image_batch, predict_batch)
-#print(type(model.predict(image_batch)))
+
