@@ -17,7 +17,7 @@ args=parser.parse_args()
 # Load and label the dataset
 def get_label(file_path):
     file_name=tf.strings.split(file_path, os.path.sep)[-1]
-    digit=tf.strings.substr(file_name, 0, 1)
+    digit=tf.strings.substr(file_name, 4, 1)
     return tf.strings.to_number(digit)
 
 def process_path(file_path):
@@ -27,6 +27,7 @@ def process_path(file_path):
     img = tf.image.decode_png(img, channels=1)
     img = tf.image.resize(img, (100, 100))
     img = tf.image.convert_image_dtype(img, tf.float32)
+    img = img/255
 
     return img, label
 
@@ -43,6 +44,8 @@ print(type(labelled_train_ds))
 def show_batch(image_batch, label_batch):
     plt.figure(figsize=(10,10))
     for n in range(25):
+        if n>=image_batch.shape[0]:
+            continue
         ax = plt.subplot(5,5,n+1)
         plt.imshow(image_batch[n][:,:,0])
         plt.title(label_batch[n])
@@ -52,7 +55,7 @@ def show_batch(image_batch, label_batch):
 training_size = 15_000
 
 batch_train_ds = labelled_train_ds.shuffle(1000).take(training_size).batch(32).prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
-batch_test_ds  = labelled_test_ds .shuffle(1000).batch(32).prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
+batch_test_ds  = labelled_test_ds .take(100).batch(32).prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
 
 image_batch, label_batch = next(iter(batch_train_ds))
 show_batch(image_batch.numpy(), label_batch.numpy())
@@ -73,15 +76,19 @@ model.compile(optimizer='adam',
                   loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                   metrics=['accuracy'])
 
-'''log_dir = f"logs/fit_12/{training_size}"
+#tensorboard plots
+'''log_dir = f"logs/fit_20_updated/{training_size}"
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir,
 histogram_freq=1)'''
 
-print (f"Training size = {training_size}")
-print('\n\n')
+print (f"Training size = {training_size}\n")
 
 # Train and test
-model.fit     (batch_train_ds, epochs=6)#, callbacks=[tensorboard_callback])
+checkpointfile='checkpoint0'
+if os.path.exists(checkpointfile+'.index'):
+    model.load_weights(checkpointfile)
+model.fit     (batch_train_ds, epochs=10)#, callbacks=[tensorboard_callback])
+model.save_weights(checkpointfile)
 model.evaluate(batch_test_ds , verbose=2)
 
 image_batch, label_batch = next(iter(batch_test_ds))
