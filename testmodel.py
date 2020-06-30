@@ -13,13 +13,14 @@ parser = argparse.ArgumentParser(description='Train and test a model for identif
 parser.add_argument('trainDir', help='Directory with train dataset')
 parser.add_argument('testDir', help='Directory with test dataset')
 parser.add_argument('epoch_num', default=10, type=int, help='Number of epochs')
+parser.add_argument('--digit', type=int, help='Position of digit to be detected')
 
 args=parser.parse_args()
 
 # Load and label the dataset
 def get_label(file_path):
     file_name=tf.strings.split(file_path, os.path.sep)[-1]
-    digit=tf.strings.substr(file_name, 0, 1)
+    digit=tf.strings.substr(file_name, args.digit, 1)
     return tf.strings.to_number(digit)
 
 def process_path(file_path):
