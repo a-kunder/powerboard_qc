@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+#include <iostream.h>
 
 import tensorflow as tf
 import numpy as np
@@ -17,7 +18,7 @@ args=parser.parse_args()
 # Load and label the dataset
 def get_label(file_path):
     file_name=tf.strings.split(file_path, os.path.sep)[-1]
-    digit=tf.strings.substr(file_name, 4, 1)
+    digit=tf.strings.substr(file_name, 0, 1)
     return tf.strings.to_number(digit)
 
 def process_path(file_path):
@@ -52,7 +53,7 @@ def show_batch(image_batch, label_batch):
         plt.axis('off')
     plt.show()
 
-training_size = 15_000
+training_size = 15000
 
 batch_train_ds = labelled_train_ds.shuffle(1000).take(training_size).batch(32).prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
 batch_test_ds  = labelled_test_ds .take(100).batch(32).prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
@@ -83,12 +84,14 @@ histogram_freq=1)'''
 
 print (f"Training size = {training_size}\n")
 
-# Train and test
+#Train
 checkpointfile='checkpoint0'
 if os.path.exists(checkpointfile+'.index'):
     model.load_weights(checkpointfile)
 model.fit     (batch_train_ds, epochs=10)#, callbacks=[tensorboard_callback])
 model.save_weights(checkpointfile)
+
+#Test
 model.evaluate(batch_test_ds , verbose=2)
 
 image_batch, label_batch = next(iter(batch_test_ds))
