@@ -12,6 +12,7 @@ import os
 parser = argparse.ArgumentParser(description='Train and test a model for identifying IDs')
 parser.add_argument('trainDir', help='Directory with train dataset')
 parser.add_argument('testDir', help='Directory with test dataset')
+parser.add_argument('epoch_num', default=10, type=int, help='Number of epochs')
 
 args=parser.parse_args()
 
@@ -88,7 +89,7 @@ print (f"Training size = {training_size}\n")
 checkpointfile='checkpoint0'
 if os.path.exists(checkpointfile+'.index'):
     model.load_weights(checkpointfile)
-model.fit     (batch_train_ds, epochs=10)#, callbacks=[tensorboard_callback])
+model.fit     (batch_train_ds, epochs=args.epoch_num)#, callbacks=[tensorboard_callback])
 model.save_weights(checkpointfile)
 
 #Test
