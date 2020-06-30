@@ -52,7 +52,7 @@ def show_batch(image_batch, label_batch):
         plt.axis('off')
     plt.show()
 
-training_size = 15_000
+training_size = 15000
 
 batch_train_ds = labelled_train_ds.shuffle(1000).take(training_size).batch(32).prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
 batch_test_ds  = labelled_test_ds .take(100).batch(32).prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
@@ -87,7 +87,7 @@ print (f"Training size = {training_size}\n")
 checkpointfile='checkpoint0'
 if os.path.exists(checkpointfile+'.index'):
     model.load_weights(checkpointfile)
-model.fit     (batch_train_ds, epochs=10)#, callbacks=[tensorboard_callback])
+model.fit     (batch_train_ds, epochs=15)#, callbacks=[tensorboard_callback])
 model.save_weights(checkpointfile)
 model.evaluate(batch_test_ds , verbose=2)
 
