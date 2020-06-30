@@ -17,7 +17,7 @@ args=parser.parse_args()
 # Load and label the dataset
 def get_label(file_path):
     file_name=tf.strings.split(file_path, os.path.sep)[-1]
-    digit=tf.strings.substr(file_name, 4, 1)
+    digit=tf.strings.substr(file_name, 0, 1)
     return tf.strings.to_number(digit)
 
 def process_path(file_path):
@@ -87,7 +87,7 @@ print (f"Training size = {training_size}\n")
 checkpointfile='checkpoint0'
 if os.path.exists(checkpointfile+'.index'):
     model.load_weights(checkpointfile)
-model.fit     (batch_train_ds, epochs=15)#, callbacks=[tensorboard_callback])
+model.fit     (batch_train_ds, epochs=10)#, callbacks=[tensorboard_callback])
 model.save_weights(checkpointfile)
 model.evaluate(batch_test_ds , verbose=2)
 
