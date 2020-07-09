@@ -80,17 +80,17 @@ model.compile(optimizer='adam',
                   metrics=['accuracy'])
 
 #tensorboard plots
-'''log_dir = f"logs/fit_20_updated/{training_size}"
+log_dir = f"logs/fit_20_updated/{training_size}"
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir,
-histogram_freq=1)'''
+histogram_freq=1)
 
 print (f"Training size = {training_size}\n")
 
 #Train
-checkpointfile='checkpoint0'
+checkpointfile=f'checkpoint0_{digit}'
 if os.path.exists(checkpointfile+'.index'):
     model.load_weights(checkpointfile)
-model.fit     (batch_train_ds, epochs=args.epoch_num)#, callbacks=[tensorboard_callback])
+model.fit     (batch_train_ds, epochs=args.epoch_num, callbacks=[tensorboard_callback])
 model.save_weights(checkpointfile)
 
 #Test
