@@ -87,7 +87,7 @@ histogram_freq=1)
 print (f"Training size = {training_size}\n")
 
 #Train
-checkpointfile=f'checkpoint0_{digit}'
+checkpointfile=f'checkpoint0_{args.digit}'
 if os.path.exists(checkpointfile+'.index'):
     model.load_weights(checkpointfile)
 model.fit     (batch_train_ds, epochs=args.epoch_num, callbacks=[tensorboard_callback])
