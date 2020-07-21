@@ -80,7 +80,7 @@ model.compile(optimizer='adam',
                   metrics=['accuracy'])
 
 #tensorboard plots
-log_dir = f"logs/fit_20_updated/{training_size}"
+log_dir = f"logs/fit_20"
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir,
 histogram_freq=1)
 
