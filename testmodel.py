@@ -35,9 +35,9 @@ def process_path(file_path):
     return img, label
 
 train_ds=tf.data.Dataset.list_files('{}/*.png'.format(args.trainDir))
-test_ds =tf.data.Dataset.list_files('{}/*.png'.format(args.testDir ))
-IMG_HEIGHT = 374
-IMG_WIDTH = 650
+test_ds =tf.data.Dataset.list_files('{}/*.JPG'.format(args.testDir ))
+IMG_HEIGHT = 560
+IMG_WIDTH = 625
 
 labelled_train_ds = train_ds.map(process_path, num_parallel_calls=tf.data.experimental.AUTOTUNE)
 labelled_test_ds  = test_ds .map(process_path, num_parallel_calls=tf.data.experimental.AUTOTUNE)
@@ -55,7 +55,7 @@ def show_batch(image_batch, label_batch):
         plt.axis('off')
     plt.show()
 
-training_size = 15000
+training_size = 10000
 
 batch_train_ds = labelled_train_ds.shuffle(1000).take(training_size).batch(32).prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
 batch_test_ds  = labelled_test_ds .take(100).batch(32).prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
@@ -92,6 +92,7 @@ if os.path.exists(checkpointfile+'.index'):
     model.load_weights(checkpointfile)
 model.fit     (batch_train_ds, epochs=args.epoch_num, callbacks=[tensorboard_callback])
 model.save_weights(checkpointfile)
+model.save('model_digit{}'.format(args.digit))
 
 #Test
 model.evaluate(batch_test_ds , verbose=2)
