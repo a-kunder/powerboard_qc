@@ -33,8 +33,8 @@ if not os.path.exists(args.outDir+"/01-blur"):
 if not os.path.exists(args.outDir+"/02-augment"):
     os.mkdir(args.outDir+"/02-augment")
 
-HEIGHT = 374
-WIDTH = 650
+HEIGHT = 560
+WIDTH = 625
 
 def generate_image(label,outDir='.'):
     #
@@ -51,19 +51,19 @@ def generate_image(label,outDir='.'):
     im=Image.new('1',(WIDTH,HEIGHT),color=(1,))
 
     # Berkeley logo
-    lbl_logo = Image.open('lbl_logo.png')
+    '''lbl_logo = Image.open('lbl_logo.png')
 
     lbl_w = WIDTH/2*0.8
     lbl_h = lbl_logo.size[1]*lbl_w/lbl_logo.size[0]
     lbl_logo = lbl_logo.resize((int(lbl_w),int(lbl_h)))
 
     im.paste(lbl_logo, (int(WIDTH*1/4-lbl_w/2), int(HEIGHT/2-lbl_h/2)) )
-
+    '''
     # Label
-    font = ImageFont.truetype(args.font, 135)
+    font = ImageFont.truetype(args.font, 275)
     draw = ImageDraw.Draw(im)
 
-    textx = WIDTH*7/10
+    textx = WIDTH/2
     texty = HEIGHT/2
 
     w,h = draw.textsize(texttop,font=font)
@@ -73,7 +73,7 @@ def generate_image(label,outDir='.'):
 
     #saving PIL image and reading as cv2 image to apply blur
     #outDir for me was train_var
-    im.save(f'{outDir}/00-plain/{label}.png','PNG')
+    im.save(f'{outDir}/00-plain/{label}.png')
     imcv = cv2.imread(f'{outDir}/00-plain/{label}.png')
     i = random.randrange(4)
     #randomly blurs image
@@ -103,7 +103,7 @@ read_path = f"{args.outDir}/01-blur/*.png"
 for x in glob.glob(read_path):
     #getting the serial number
     y = os.path.basename(x)[:7]
-    print(f"serial number : {y}")
+    #print(f"serial number : {y}")
     pic = tf.keras.preprocessing.image.load_img(x)
     pic_array = tf.keras.preprocessing.image.img_to_array(pic)
     pic_array = pic_array.reshape((1,) + pic_array.shape) # Converting into 4 dimension array
