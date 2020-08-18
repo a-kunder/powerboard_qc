@@ -46,10 +46,10 @@ print(type(labelled_train_ds))
 # Prepare data for training
 def show_batch(image_batch, label_batch):
     plt.figure(figsize=(10,10))
-    for n in range(25):
+    for n in range(16):
         if n>=image_batch.shape[0]:
             continue
-        ax = plt.subplot(5,5,n+1)
+        ax = plt.subplot(4,4,n+1)
         plt.imshow(image_batch[n][:,:,0])
         plt.title(label_batch[n])
         plt.axis('off')
