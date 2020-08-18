@@ -33,8 +33,8 @@ if not os.path.exists(args.outDir+"/01-blur"):
 if not os.path.exists(args.outDir+"/02-augment"):
     os.mkdir(args.outDir+"/02-augment")
 
-HEIGHT = 560
-WIDTH = 625
+HEIGHT = 150
+WIDTH = 170
 
 def generate_image(label,outDir='.'):
     #
@@ -60,16 +60,16 @@ def generate_image(label,outDir='.'):
     im.paste(lbl_logo, (int(WIDTH*1/4-lbl_w/2), int(HEIGHT/2-lbl_h/2)) )
     '''
     # Label
-    font = ImageFont.truetype(args.font, 275)
+    font = ImageFont.truetype(args.font, 75)
     draw = ImageDraw.Draw(im)
 
     textx = WIDTH/2
     texty = HEIGHT/2
 
     w,h = draw.textsize(texttop,font=font)
-    draw.text((textx-w/2,texty-h-10),texttop,fill=(0),font=font)
+    draw.text((textx-w/2,texty-h-5),texttop,fill=(0),font=font)
     w,h = draw.textsize(textbot,font=font)
-    draw.text((textx-w/2,texty  +10),textbot,fill=(0),font=font)
+    draw.text((textx-w/2,texty - 5),textbot,fill=(0),font=font)
 
     #saving PIL image and reading as cv2 image to apply blur
     #outDir for me was train_var
