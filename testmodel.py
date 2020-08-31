@@ -12,7 +12,7 @@ import os
 parser = argparse.ArgumentParser(description='Train and test a model for identifying IDs')
 parser.add_argument('trainDir', help='Directory with train dataset')
 parser.add_argument('testDir', help='Directory with test dataset')
-parser.add_argument('epoch_num', default=10, type=int, help='Number of epochs')
+parser.add_argument('--ep_num', default=10, type=int, help='Number of epochs')
 parser.add_argument('--digit', type=int, help='Position of digit to be detected')
 
 args=parser.parse_args()
@@ -28,7 +28,7 @@ def process_path(file_path):
     # load the raw data from the file as a string
     img = tf.io.read_file(file_path)
     img = tf.image.decode_png(img, channels=1)
-    img = tf.image.resize(img, (100, 100))
+    img = tf.image.resize(img, (70, 70))
     img = tf.image.convert_image_dtype(img, tf.float32)
     img = img/255
 
@@ -90,7 +90,7 @@ print (f"Training size = {training_size}\n")
 checkpointfile=f'checkpoint0_{args.digit}'
 if os.path.exists(checkpointfile+'.index'):
     model.load_weights(checkpointfile)
-model.fit     (batch_train_ds, epochs=args.epoch_num, callbacks=[tensorboard_callback])
+model.fit     (batch_train_ds, epochs=args.ep_num, callbacks=[tensorboard_callback])
 model.save_weights(checkpointfile)
 model.save('model_digit{}'.format(args.digit))
 
