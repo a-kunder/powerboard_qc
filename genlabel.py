@@ -86,16 +86,17 @@ def generate_image(label,outDir='.'):
     cv2.imwrite(write_add, imcv)
 
 for i in range(args.ngen):
+    print(i)
     generate_image('{:07d}'.format(random.randrange(9999999)),args.outDir)
 
 # image augmentation
 train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
     rescale=1./255,
-    rotation_range=3,
-    width_shift_range=.1,
+    rotation_range=2.5,
+    width_shift_range=.05,
     height_shift_range=.1,
     horizontal_flip=False,
-    zoom_range=0.1)
+    zoom_range=0.08)
 
 #creating and saving the augmented images
 i = 0
@@ -107,15 +108,17 @@ for x in glob.glob(read_path):
     pic = tf.keras.preprocessing.image.load_img(x)
     pic_array = tf.keras.preprocessing.image.img_to_array(pic)
     pic_array = pic_array.reshape((1,) + pic_array.shape) # Converting into 4 dimension array
-    count = 0
+    aug_count = 0
     for batch in train_datagen.flow(
             pic_array, 
             batch_size=5,
             save_to_dir=f"{args.outDir}/02-augment",
             save_prefix=y, 
             save_format='png'):
-        count += 1
-        if count > 3:
+        aug_count += 1
+        if aug_count > 3:
             break
+    i += 1
+    print(i)
     
 
