@@ -92,11 +92,11 @@ for i in range(args.ngen):
 # image augmentation
 train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
     rescale=1./255,
-    rotation_range=2.5,
-    width_shift_range=.05,
-    height_shift_range=.1,
+    rotation_range=2.75,
+    width_shift_range=.02,
+    height_shift_range=.05,
     horizontal_flip=False,
-    zoom_range=0.08)
+    zoom_range=0.05)
 
 #creating and saving the augmented images
 i = 0

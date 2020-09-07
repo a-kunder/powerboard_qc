@@ -66,7 +66,7 @@ show_batch(image_batch.numpy(), label_batch.numpy())
 # Make model
 model = tf.keras.models.Sequential()
 
-model.add(tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(100,100,1)))
+model.add(tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(70,70,1)))
 model.add(tf.keras.layers.MaxPooling2D((2, 2)))
 model.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu'))
 model.add(tf.keras.layers.MaxPooling2D((2, 2)))
@@ -99,5 +99,6 @@ model.evaluate(batch_test_ds , verbose=2)
 
 image_batch, label_batch = next(iter(batch_test_ds))
 predict_batch=np.argmax(model.predict(image_batch),axis=1)
+print(predict_batch)
 show_batch(image_batch, predict_batch)
 
