@@ -54,6 +54,7 @@ def show_batch(image_batch, label_batch):
         plt.title(label_batch[n])
         plt.axis('off')
     plt.show()
+    plt.savefig(f'digit_{args.digit}')
 
 training_size = 10000
 
@@ -100,5 +101,6 @@ model.evaluate(batch_test_ds , verbose=2)
 image_batch, label_batch = next(iter(batch_test_ds))
 predict_batch=np.argmax(model.predict(image_batch),axis=1)
 print(predict_batch)
+print(model.predict(image_batch))
 show_batch(image_batch, predict_batch)
 
