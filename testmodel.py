@@ -28,7 +28,7 @@ def process_path(file_path):
     # load the raw data from the file as a string
     img = tf.io.read_file(file_path)
     img = tf.image.decode_png(img, channels=1)
-    img = tf.image.resize(img, (100, 100))
+    img = tf.image.resize(img, (80, 80))
     img = tf.image.convert_image_dtype(img, tf.float32)
     img = img/255
 
@@ -66,7 +66,7 @@ show_batch(image_batch.numpy(), label_batch.numpy())
 # Make model
 model = tf.keras.models.Sequential()
 
-model.add(tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(100,100,1)))
+model.add(tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(80,80,1)))
 model.add(tf.keras.layers.MaxPooling2D((2, 2)))
 model.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu'))
 model.add(tf.keras.layers.MaxPooling2D((2, 2)))
