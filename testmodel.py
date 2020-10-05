@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-#include <iostream.h>
 
 import tensorflow as tf
 import numpy as np
@@ -72,6 +71,7 @@ model.add(tf.keras.layers.MaxPooling2D((2, 2)))
 model.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu'))
 model.add(tf.keras.layers.MaxPooling2D((2, 2)))
 model.add(tf.keras.layers.Flatten())
+model.add(tf.keras.layers.Dense(100, activation='relu', kernel_initializer='he_uniform'))
 model.add(tf.keras.layers.Dense(10))
 
 model.summary()

@@ -82,19 +82,24 @@ def generate_image(label,outDir='.'):
     if i == 1:
         imcv = cv2.GaussianBlur(imcv,(5,5),0)
 
+    #randonly adds scratches
+    for _ in range(0, 9):
+        x1, x2 = random.randint(0, 500), random.randint(0, 500)
+        y1, y2 = random.randint(0, 200), random.randint(0, 200)
+        imcv = cv2.line(imcv, (x1, y1), (x2, y2), (0, 0, 0), 4)
+
     write_add = f"{outDir}/01-blur/{label}.png"
     cv2.imwrite(write_add, imcv)
 
 for i in range(args.ngen):
-    print(i)
     generate_image('{:07d}'.format(random.randrange(9999999)),args.outDir)
 
 # image augmentation
 train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
     rescale=1./255,
-    rotation_range=2.75,
+    rotation_range=1.75,
     width_shift_range=.02,
-    height_shift_range=.1,
+    height_shift_range=.07,
     horizontal_flip=False,
     zoom_range=0.05)
 
