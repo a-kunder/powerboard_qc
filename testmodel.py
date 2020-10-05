@@ -71,7 +71,7 @@ model.add(tf.keras.layers.MaxPooling2D((2, 2)))
 model.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu'))
 model.add(tf.keras.layers.MaxPooling2D((2, 2)))
 model.add(tf.keras.layers.Flatten())
-model.add(tf.keras.layers.Dense(100, activation='relu', kernel_initializer='he_uniform'))
+#model.add(tf.keras.layers.Dense(100, activation='relu'))
 model.add(tf.keras.layers.Dense(10))
 
 model.summary()
@@ -88,11 +88,11 @@ histogram_freq=1)
 print (f"Training size = {training_size}\n")
 
 #Train
-checkpointfile=f'checkpoint0_{args.digit}'
+'''checkpointfile=f'checkpoint0_{args.digit}'
 if os.path.exists(checkpointfile+'.index'):
-    model.load_weights(checkpointfile)
+    model.load_weights(checkpointfile)'''
 model.fit     (batch_train_ds, epochs=args.ep_num, callbacks=[tensorboard_callback])
-model.save_weights(checkpointfile)
+#model.save_weights(checkpointfile)
 model.save('model_digit{}'.format(args.digit))
 
 #Test
@@ -101,6 +101,7 @@ model.evaluate(batch_test_ds , verbose=2)
 image_batch, label_batch = next(iter(batch_test_ds))
 predict_batch=np.argmax(model.predict(image_batch),axis=1)
 print(predict_batch)
-print(model.predict(image_batch))
+a = list(model.predict(image_batch))
+print(a)
 show_batch(image_batch, predict_batch)
 
