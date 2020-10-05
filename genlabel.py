@@ -99,7 +99,7 @@ train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
     rescale=1./255,
     rotation_range=1.75,
     width_shift_range=.02,
-    height_shift_range=.07,
+    height_shift_range=.11,
     horizontal_flip=False,
     zoom_range=0.05)
 
