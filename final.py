@@ -228,9 +228,9 @@ if __name__=='__main__':
         predict_batch = list(predict_batch)
         if serial_num:
             for i in range(len(serial_num)):
-                serial_num[i] = str(serial_num[i]) + predict_batch[i]
+                serial_num[i] += str(predict_batch[i])
         else:
-            serial_num += predict_batch
+            serial_num += str(predict_batch)
 
     show_batch(image_batch, serial_num)
 
