@@ -206,13 +206,13 @@ if __name__=='__main__':
             plt.axis('off')
         plt.show()
 
-    
+    test_ds = tf.data.Dataset.list_files('{}/*.JPG'.format('main_output'))
+    labelled_test_ds  = test_ds .map(process_path, num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    batch_test_ds  = labelled_test_ds.batch(32).prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
     serial_num =[]
 
-    for index in range(0, 2):
-        test_ds = tf.data.Dataset.list_files('{}/*.JPG'.format('main_output'))
-        labelled_test_ds  = test_ds .map(process_path, num_parallel_calls=tf.data.experimental.AUTOTUNE)
-        batch_test_ds  = labelled_test_ds.batch(32).prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
+    for index in range(0, 7):
+        
         new_model = tf.keras.models.load_model('model_digit{}'.format(index))
         new_model.summary()
 
@@ -226,11 +226,12 @@ if __name__=='__main__':
         prediction = new_model.predict(batch_test_ds)
         predict_batch = np.argmax(prediction,axis=1)
         predict_batch = list(predict_batch)
-        if serial_num:
+
+        if len(serial_num) > 0:
             for i in range(len(serial_num)):
                 serial_num[i] += str(predict_batch[i])
         else:
-            serial_num += str(predict_batch)
+            serial_num = [str(item) for item in predict_batch]
 
-    show_batch(image_batch, serial_num)
+    show_batch(next(iter(batch_test_ds)), serial_num)
 
