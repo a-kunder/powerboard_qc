@@ -4,7 +4,7 @@ import argparse
 import numpy as np
 import cv2
 import glob
-import imutils
+import random
 
 ref_point = []
 
@@ -57,7 +57,7 @@ class PBv3Matcher:
         good = []
         for m in matches:
             if len(m)<=1: continue
-            elif m[0].distance < 0.7*m[1].distance:
+            elif m[0].distance < 0.75*m[1].distance:
                 good.append(m[0])
 
         if len(good)<self.MIN_MATCH_COUNT:
@@ -94,57 +94,28 @@ if __name__=='__main__':
 
     args = parser.parse_args()
 
-    for x in glob.glob(f"{args.input}/*JPG"):
+    read_path = f"{args.input}/*.JPG"
+    for x in glob.glob(read_path):
 
         iimg = cv2.imread(x)
 
-        cv2.namedWindow('test', cv2.WINDOW_NORMAL)
-        cv2.resizeWindow('test', 900, 600)
-        cv2.imshow('test', iimg)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        #cv2.namedWindow('test', cv2.WINDOW_NORMAL)
+        #cv2.resizeWindow('test', 90, 60)
+        #cv2.imshow('test', iimg)
+        #cv2.waitKey(0)
+        #cv2.destroyAllWindows()
 
-        serial = input("Enter the serial number: ")
-        cv2.imwrite(f"{args.output}/{serial}.JPG", iimg)
+        #serial = input("Enter the serial number: ")
+        #cv2.imwrite(f"{args.output}/{serial}.JPG", iimg)
+        n = random.randint(0, 1000000)
         
         trf=PBv3Matcher('data/golden.jpg')
         timg=trf.transform(iimg)
 
         if timg is None:
-            iimg = imutils.resize(iimg, width = 900)
-            #reads and resizes the image
-
-            clone = iimg.copy()
-            cv2.namedWindow("image")
-            cv2.moveWindow("image", 20, 20)
-            cv2.setMouseCallback("image", PBv3Matcher.shape_select)
-
-            while True:
-                # display the image and wait for a keypress
-                cv2.imshow("image", iimg)
-                key = cv2.waitKey(1) & 0xFF
-
-                # if the 'r' key is pressed, reset the cropping region
-                if key == ord("r"):
-                    iimg = clone.copy()
-
-                # if the 'c' key is pressed, break from the loop
-                elif key == ord("c"):
-                    break
-
-            if len(ref_point) == 2:
-                crop_img = clone[ref_point[0][1]:ref_point[1][1], ref_point[0][0]:ref_point[1][0]]
-                crop_img = cv2.resize(crop_img, (600, 500))
-                cv2.imshow("crop_img", crop_img)
-                cv2.waitKey(0)
-
-            write_add = f"{args.output}/{serial}.JPG"
-            cv2.imwrite(write_add, crop_img)
-            cv2.destroyAllWindows()
+            print('Cropping matches insufficient')
 
         else:
             cimg=timg[260:260+560,750:750+625]
-            #cv2.imshow("test",cimg)
-            #cv2.waitKey(0)
-            write_add = f"{args.output}/{serial}.JPG"
+            write_add = f"{args.output}/{n}.JPG"
             cv2.imwrite(write_add, cimg)
