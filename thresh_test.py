@@ -48,10 +48,6 @@ for x in glob.glob(read_path):
     #_,threshold2 = cv2.threshold(grayscaled,125,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 
     thresh = [b_thresh, g_thresh, r_thresh]
-
-    #cv2.imshow('Otsu threshold',threshold2)
-    #cv2.imshow("Thresh image", th)
-    #cv2.imshow("OG image", image)
     
     for i in range(len(images)):
         cv2.imshow(channels[i] + "_thresh", thresh[i])
