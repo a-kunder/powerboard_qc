@@ -57,7 +57,7 @@ class PBv3Matcher:
         good = []
         for m in matches:
             if len(m)<=1: continue
-            elif m[0].distance < 0.75*m[1].distance:
+            elif m[0].distance < 0.8*m[1].distance:
                 good.append(m[0])
 
         if len(good)<self.MIN_MATCH_COUNT:
@@ -75,40 +75,17 @@ class PBv3Matcher:
 
         return timg
 
-    def shape_select(event, x, y, flags, param):
-        global ref_point
-
-        if event == cv2.EVENT_LBUTTONDOWN:
-            ref_point = [(x, y)]
-
-        elif event == cv2.EVENT_LBUTTONUP:
-            ref_point.append((x, y))
-
-        cv2.rectangle(iimg, ref_point[0], ref_point[1], (0, 0, 0), 2)
-        cv2.imshow("image", iimg)
-
 if __name__=='__main__':
     parser = argparse.ArgumentParser(description='Crop a sheildbox from a picture of a Powerboard')
     parser.add_argument('input' ,help='Path to images of Powerboards')
     parser.add_argument('output',help='Path where the results will be saved')
-
     args = parser.parse_args()
 
     read_path = f"{args.input}/*.JPG"
     for x in glob.glob(read_path):
-
         iimg = cv2.imread(x)
-
-        #cv2.namedWindow('test', cv2.WINDOW_NORMAL)
-        #cv2.resizeWindow('test', 90, 60)
-        #cv2.imshow('test', iimg)
-        #cv2.waitKey(0)
-        #cv2.destroyAllWindows()
-
-        #serial = input("Enter the serial number: ")
-        #cv2.imwrite(f"{args.output}/{serial}.JPG", iimg)
-        n = random.randint(0, 1000000)
-        
+        img_name = x.split('/')[1]
+        print(img_name)
         trf=PBv3Matcher('data/golden.jpg')
         timg=trf.transform(iimg)
 
@@ -117,5 +94,8 @@ if __name__=='__main__':
 
         else:
             cimg=timg[260:260+560,750:750+625]
-            write_add = f"{args.output}/{n}.JPG"
+            cv2.imshow("timg", timg)
+            cv2.waitKey(0)
+            cv2,destroyAllWindows()
+            write_add = f"{args.output}/{img_name}"
             cv2.imwrite(write_add, cimg)
